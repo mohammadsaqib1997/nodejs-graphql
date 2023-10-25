@@ -38,35 +38,41 @@ const createUserSchema = Joi.object({
 const updateUserSchema = Joi.object({
     username: Joi.string().max(30)
         .external(async (value, {message, prefs}) => {
-            try {
-                const {id} = prefs.context
-                const existingUser = await User.findOne({where: {username: value, id: {[Op.ne]: id}}});
+            if (value) {
+                try {
+                    const {id} = prefs.context
+                    const existingUser = await User.findOne({where: {username: value, id: {[Op.ne]: id}}});
 
-                if (existingUser) {
-                    return message('Username is already in use');
+                    if (existingUser) {
+                        return message('Username is already in use');
+                    }
+
+                    return value;
+                } catch (error) {
+                    return message('Internal server error');
                 }
-
-                return value;
-            } catch (error) {
-                return message('Internal server error');
             }
+            return value
         }),
-    email: Joi.string().email().required()
+    email: Joi.string().email()
         .external(async (value, {message, prefs}) => {
-            try {
-                const {id} = prefs.context
-                const existingUser = await User.findOne({where: {email: value, id: {[Op.ne]: id}}});
+            if (value) {
+                try {
+                    const {id} = prefs.context
+                    const existingUser = await User.findOne({where: {email: value, id: {[Op.ne]: id}}});
 
-                if (existingUser) {
-                    return message('Email is already in use');
+                    if (existingUser) {
+                        return message('Email is already in use');
+                    }
+
+                    return value;
+                } catch (error) {
+                    return message('Internal server error');
                 }
-
-                return value;
-            } catch (error) {
-                return message('Internal server error');
             }
+            return value
         }),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(6),
 });
 
 module.exports = {
