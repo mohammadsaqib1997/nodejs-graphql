@@ -6,11 +6,11 @@ Task 1: Implement a GraphQL API
 
 Create a Node.js application that sets up a GraphQL API using Apollo Server. The API should have the following functionalities:
 
--   Query all users: Create a query to retrieve a list of all users from a database. Include pagination and sorting options.
--   Query a user: Create a query to retrieve a single user by their ID from the database.
--   Create a user: Implement a mutation to create a new user. Validate the input fields, such as username, email, and password.
--   Update a user: Implement a mutation to update an existing user by their ID. Only allow authorized users to update their own information.
--   Delete a user: Implement a mutation to delete a user by their ID. Only allow authorized users to delete their own account.
+-   ~~Query all users: Create a query to retrieve a list of all users from a database. Include pagination and sorting options.~~
+-   ~~Query a user: Create a query to retrieve a single user by their ID from the database.~~
+-   ~~Create a user: Implement a mutation to create a new user. Validate the input fields, such as username, email, and password.~~
+-   ~~Update a user: Implement a mutation to update an existing user by their ID. Only allow authorized users to update their own information.~~
+-   ~~Delete a user: Implement a mutation to delete a user by their ID. Only allow authorized users to delete their own account.~~
 
 Task 2: Implement a job queue with Redis
 
