@@ -66,18 +66,23 @@ const resolvers = {
                 throw new Error('Authentication required');
             }
 
-            const jobs = await jobQueue.getJobs(['completed', 'active', 'failed', 'waiting', 'paused', 'delayed'], 0, -1);
+            try {
+                const jobs = await jobQueue.getJobs(['completed', 'active', 'failed', 'waiting', 'paused', 'delayed'], 0, -1);
 
-            const userJobs = jobs.filter((job) => {
-                return job.data.user_id === user.id
-            });
+                const userJobs = jobs.filter((job) => {
+                    return job.data?.user_id && job.data?.user_id === user.id
+                });
 
-            return userJobs.map((job) => ({
-                id: job.id,
-                data: job.data,
-                status: job?.status ?? 'pending',
-                result: job?.result ?? null,
-            }));
+                return userJobs.map((job) => ({
+                    id: job.id,
+                    data: JSON.stringify(job?.data?.user_data ?? ''),
+                    status: job?.status ?? 'pending',
+                    result: job?.result ?? '',
+                }));
+            } catch (e) {
+                console.log(e)
+                return null
+            }
         }
     },
     Mutation: {
