@@ -16,9 +16,9 @@ Task 2: Implement a job queue with Redis
 
 Integrate Redis into your Node.js application to implement a job queue system. The system should have the following features:
 
--   Job creation: Allow users to create jobs with specific data and enqueue them in the Redis job queue.
--   Job processing: Implement a worker that continuously checks the job queue and processes jobs as they become available. Each job should be processed only once.
--   Job status and result: Provide an endpoint or GraphQL query to check the status and result of a specific job by its ID.
+-   ~~Job creation: Allow users to create jobs with specific data and enqueue them in the Redis job queue.~~
+-   ~~Job processing: Implement a worker that continuously checks the job queue and processes jobs as they become available. Each job should be processed only once.~~
+-   ~~Job status and result: Provide an endpoint or GraphQL query to check the status and result of a specific job by its ID.~~
 
 Task 3: Implement caching
 

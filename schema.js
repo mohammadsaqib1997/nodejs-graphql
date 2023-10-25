@@ -3,6 +3,7 @@ const {hash} = require("bcrypt");
 const bcrypt = require("bcrypt");
 const {sign, verify} = require("jsonwebtoken");
 const {createUserSchema, updateUserSchema} = require("./validations/userValidation");
+const jobQueue = require('./jobQueue')
 
 const secret = 'TestGraphQL123'
 
@@ -24,9 +25,17 @@ type User {
     password: String!
 }
 
+type QueueJob {
+    id: ID!
+    data: String
+    status: String
+    result: String
+}
+
 type Query {
     users(page: Int, perPage: Int, sortBy: String): [User]
     getUser(id: ID!): User
+    getJobs: [QueueJob]
 }
 
 type Mutation {
@@ -34,6 +43,7 @@ type Mutation {
     updateUser(id: ID!, username: String, email: String, password: String): User
     deleteUser(id: ID!): User
     login(email: String!, password: String!): String
+    createJob(data: String!): QueueJob
 }
 `;
 
@@ -49,6 +59,26 @@ const resolvers = {
             return users;
         },
         getUser: async (_, {id}) => await User.findByPk(id),
+        getJobs: async (_, {}, context) => {
+            const user = verifyToken(context)
+
+            if (!user) {
+                throw new Error('Authentication required');
+            }
+
+            const jobs = await jobQueue.getJobs(['completed', 'active', 'failed', 'waiting', 'paused', 'delayed'], 0, -1);
+
+            const userJobs = jobs.filter((job) => {
+                return job.data.user_id === user.id
+            });
+
+            return userJobs.map((job) => ({
+                id: job.id,
+                data: job.data,
+                status: job?.status ?? 'pending',
+                result: job?.result ?? null,
+            }));
+        }
     },
     Mutation: {
         createUser: async (_, args) => {
@@ -119,6 +149,26 @@ const resolvers = {
 
             return token;
         },
+        createJob: async (_, {data}, context) => {
+            const authUser = verifyToken(context)
+
+            if (!authUser) {
+                throw new Error('Authentication required');
+            }
+
+            const job = await jobQueue.add({
+                user_data: data,
+                user_id: authUser.id,
+                status: "pending"
+            });
+
+            return {
+                id: job.id,
+                data,
+                status: job.data.status,
+                result: null
+            }
+        }
     }
 }
 
